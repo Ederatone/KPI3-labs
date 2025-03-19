@@ -3,4 +3,6 @@
 Team members :
 
 Shkarban Volodymyr IM-32
-skibidisigma
+
+Pulenko Evheniy IM-32
+
