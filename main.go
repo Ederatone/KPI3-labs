@@ -1,39 +1,30 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "log"
-    "net/http"
-    "time"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"time"
 )
 
-type Response struct {
-    CurrentTime string `json:"current_time"`
-}
-
-func handleRequest(writer http.ResponseWriter, req *http.Request) {
-    if req.Method == http.MethodGet {
-        data := Response{CurrentTime: time.Now().Format(time.RFC3339)}
-        writer.Header().Set("Content-Type", "application/json")
-        if encodeErr := json.NewEncoder(writer).Encode(data); encodeErr != nil {
-            http.Error(writer, "Error encoding JSON", http.StatusInternalServerError)
-            log.Printf("Encoding error: %v", encodeErr)
-        }
-        return
-    }
-    http.Error(writer, "Unsupported method", http.StatusMethodNotAllowed)
+type TimeResponse struct {
+	Time string `json:"time"`
 }
 
 func main() {
-    endpoint := "/time"
-    port := 8795
-    address := fmt.Sprintf(":%d", port)
+	http.HandleFunc("/time", func(w http.ResponseWriter, r *http.Request) {
+		currentTime := time.Now().Format(time.RFC3339)
+		response := TimeResponse{
+			Time: currentTime,
+		}
 
-    http.HandleFunc(endpoint, handleRequest)
-    log.Printf("Server running on %s...", address)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(response)
+	})
 
-    if serverErr := http.ListenAndServe(address, nil); serverErr != nil {
-        log.Fatalf("Failed to launch server: %v", serverErr)
-    }
+	fmt.Println("Сервер запущений на http://localhost:8795")
+	if err := http.ListenAndServe(":8795", nil); err != nil {
+		fmt.Println("Помилка при запуску сервера:", err)
+	}
 }
