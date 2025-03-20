@@ -1,6 +1,6 @@
 # KPI3-labs
 
-Team members :
+Team members:
 
 Shkarban Volodymyr IM-32
 
